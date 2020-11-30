@@ -11,7 +11,12 @@ import networkx as nx
 import random
 
 # generate data
-G = nx.complete_multipartite_graph(2,3,4)
+G = nx.complete_graph(10)
+#delete random edges to make graph not complete
+u_delete = random.randrange(0,9)
+v_delete = random.randrange(1,8) + 2
+G.remove_edge(u_delete, v_delete)
+G.remove_edge(u_delete + 1,v_delete - 1)
 # here generated multigraph with 2-3-4 vertices in subsets, just to easier show
 nx.draw(G,with_labels=True)
 
@@ -47,4 +52,6 @@ def contract(nodes,edges):
 result_nodes, result_edges = contract(nodes, edges)
 print('Nodes after:', result_nodes)
 print('Edges after:', result_edges)
+
+
 
