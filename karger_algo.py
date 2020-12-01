@@ -9,14 +9,18 @@ Original file is located at
 
 import networkx as nx
 import random
+import time
+import copy
+import matplotlib as mpl
 
 # generate data
-G = nx.complete_graph(10)
-#delete random edges to make graph not complete
-u_delete = random.randrange(0,9)
-v_delete = random.randrange(1,8) + 2
+n = 32
+G = nx.complete_graph(n)
+#delete random edge to make graph not complete
+u_delete = random.randint(1,n-1)
+v_delete = u_delete - 1
+print(v_delete,u_delete)
 G.remove_edge(u_delete, v_delete)
-G.remove_edge(u_delete + 1,v_delete - 1)
 # here generated multigraph with 2-3-4 vertices in subsets, just to easier show
 nx.draw(G,with_labels=True)
 
@@ -33,6 +37,7 @@ nodes = list(G.nodes)
 print('Nodes before:', nodes)
 
 def contract(nodes,edges):
+  start = time.time()
   while len(nodes) > 2:
     ind = random.randrange(0, len(edges))
     [u, v] = edges.pop(ind)
@@ -47,11 +52,59 @@ def contract(nodes,edges):
         newEdge.append(edges[i])
     
     edges = newEdge
-  return nodes, edges
+  finish = time.time()
+  return nodes, edges, finish - start
 
-result_nodes, result_edges = contract(nodes, edges)
-print('Nodes after:', result_nodes)
-print('Edges after:', result_edges)
+result_time = 0
+for i in range (10):
+  n = copy.deepcopy(nodes)
+  e = copy.deepcopy(edges)
+  res_n, res_e, t = contract(n, e)
+  print('now time',t)
+  result_time = result_time + t
+print('sum of time',result_time)
+print('result time',result_time / 10)
+
+#result_nodes, result_edges, time = contract(nodes, edges)
+#print('Nodes after:', result_nodes)
+#print('Edges after:', result_edges)
+
+
+y = [0.000008487701416015625,
+     0.000015974044799804688,
+     0.000027298927307128906,
+     0.000033855438232421875,
+     0.00004968643188476562,
+     0.00019996166229248048,
+     0.00011808872222900391,
+     0.00017833709716796875,
+     0.0002534151077270508,
+     0.00029630661010742186,
+     0.0003841400146484375,
+     0.0004637718200683594,
+     0.0005532026290893555,
+     0.000665736198425293,
+     0.000749516487121582,
+     0.0009771108627319336,
+     0.001157689094543457,
+     0.0013425111770629882,
+     0.0015639305114746095,
+     0.0018289327621459962,
+     0.0021206140518188477,
+     0.002374720573425293,
+     0.002732992172241211,
+     0.0031057119369506834,
+     0.0037327051162719727,
+     0.004275465011596679,
+     0.0045185089111328125,
+     0.004948186874389649,
+     0.00572812557220459,
+     0.00642082691192627]
+x = [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32]
+mpl.pyplot.plot(x,y,'o-r')
+mpl.pyplot.xlabel('number of vertices, n')
+mpl.pyplot.ylabel('time,c')
+mpl.pyplot.grid()
 
 
 
